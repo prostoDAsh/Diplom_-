@@ -1,12 +1,16 @@
+using System;
+using UnityEngine;
 using Zenject;
 
-public class ProjectInstaller : Installer<ProjectInstaller>
+public class ProjectInstaller : IInitializable, IDisposable
 {
-    public override void InstallBindings()
+    public void Initialize()
     {
-        Container.BindInterfacesAndSelfTo<GameManager>().AsSingle().NonLazy(); // todo BindInterfaces
+        Debug.Log("ProjectInstaller Init");
     }
-    
-    
-}
 
+    public void Dispose()
+    {
+        Debug.Log("ProjectInstaller Dis");
+    }
+}
