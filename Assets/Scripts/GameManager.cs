@@ -1,25 +1,16 @@
 using System;
-
 using UnityEngine;
+using Zenject;
 
-public class GameManager : MonoBehaviour
+public class GameManager : IInitializable, IDisposable
 {
-    public static GameManager Instance { get; private set; }
-    
-    private UIController _uiController;
-
-    private void Awake()
+    public void Initialize()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+       Debug.Log("Initialize GameManager");
     }
 
-   
+    public void Dispose()
+    {
+        Debug.Log("Dispose GameManager");
+    }
 }
