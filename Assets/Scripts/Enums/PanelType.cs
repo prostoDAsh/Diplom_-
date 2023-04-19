@@ -6,7 +6,7 @@
         Menu,
         Game,
         Win,
-        StopGame,
+        Stop,
         Fail
     }
 }
