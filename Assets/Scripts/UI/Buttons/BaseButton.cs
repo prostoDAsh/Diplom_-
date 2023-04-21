@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using Zenject;
 
-namespace UI.Buttons
+namespace UI
 {
     public abstract class BaseButton<T> : MonoBehaviour where T : struct
     {

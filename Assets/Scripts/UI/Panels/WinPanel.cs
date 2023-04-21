@@ -1,8 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class WinPanel : MonoBehaviour
+namespace UI
 {
+    public class WinPanel : MonoBehaviour
+    {
    
+    }
 }
+

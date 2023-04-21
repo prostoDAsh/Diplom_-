@@ -1,8 +1,7 @@
-using System;
 using Enums;
 using Signals.Buttons;
 using Signals.Keys;
-using UI.Panels;
+using UI;
 using UnityEngine;
 using Zenject;
 

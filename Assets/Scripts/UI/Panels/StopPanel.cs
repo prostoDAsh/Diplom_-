@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UI.Panels
+namespace UI
 {
     public class StopPanel : MonoBehaviour
     {
