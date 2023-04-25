@@ -1,43 +1,38 @@
 using System;
-using Unity.VisualScripting;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Weapon.Bullet;
+using UnityEngine.UI;
+
 
 namespace UI.HealthBar
 {
     public class Health : MonoBehaviour
-
     {
-        [FormerlySerializedAs("_bulet")] public Bullet _bullet;
-        private float _currentValueHealth;
+        [SerializeField] private float _duration;
+        private Image _healthBar;
+        private float _normalizeHeath = 1f;
+
+        private float _currentHealth;
+
+        private void Awake()
+        {
+            _healthBar = GetComponentInChildren<HealthBar>().GetComponent<Image>();
+            _healthBar.fillAmount = _normalizeHeath;
+        }
+
+        public void Init(float healthOnStart)
+        {
+            _currentHealth = healthOnStart;
+            
+        }
+
+        public async UniTaskVoid ShowHealth(float heath)
+        {
+            await _healthBar.DOFillAmount(_normalizeHeath, _duration);
+        }
+
         
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.TryGetComponent(out _bullet))
-            {
-                TakeDamage(5);
-                Destroy(other.GameObject());
-            }
-        }
-
-        public void TakeDamage(int damage)
-        {
-            _currentValueHealth -= damage;
-
-            if (_currentValueHealth < 0)
-            {
-                _currentValueHealth = 0;
-                //Fail;
-            }
-        }
-
-        //private void fail()
-       // {
-        //    
-       // }
-       
-       
     }
     
 }

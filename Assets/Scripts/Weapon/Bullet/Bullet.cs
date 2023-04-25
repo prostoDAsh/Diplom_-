@@ -1,29 +1,30 @@
+using System;
 using UnityEngine;
 
 namespace Weapon.Bullet
 {
     public class Bullet : MonoBehaviour
     {
-        [SerializeField] public float speed = 10f;
-        [SerializeField] public float lifetime = 2f;
+        [SerializeField] private float speed = 10f;
+        [SerializeField] private float damage = 10f;
 
-        void Start()
+        private Vector3 _direction;
+        public float Damage => damage;
+
+        public void Init(Vector3 target)
         {
-            Destroy(gameObject, lifetime);
+            _direction = new Vector3(target.x, transform.position.y, target.z);
         }
 
-        void Update()
+        private void Update()
         {
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+            transform.Translate(_direction * (speed * Time.deltaTime));
         }
 
-        void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision other)
         {
-            if (other.GetComponent<Enemy.Enemy>() != null)
-            {
-                Destroy(gameObject);
-                other.GetComponent<Enemy.Enemy>().Die();
-            }
+            //if(other.gameObject.GetComponent<Player.Player>())
+            gameObject.SetActive(false);
         }
     }
 }
