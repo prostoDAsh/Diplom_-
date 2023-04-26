@@ -11,17 +11,38 @@ namespace Player
 
     {
         [SerializeField] private float _healthOnStart = 100f;
-        [SerializeField] private float _forwardSpeed = 0f;
-        [SerializeField] private float _rotationSpeed = 3f;
-        [SerializeField] private Camera camera;
-        
 
+
+        [Header("Settings rotate")] 
+        [SerializeField] private float minRotateY = -60f;
+        [SerializeField] private float maxRotateY = 60f;
+        [SerializeField] private float _rotationSpeed = 3f;
+        [SerializeField] private float _smoothTime = 0.1f;
+        private Camera _camera;
+        private float _mouseX;
+        private float _mouseY;
+        private float _currentRotationX;
+        private float _currentRotationY;
+        private float _velocityX;
+        private float _velocityY;
+        
+        [Header("Settings move")]
+        [SerializeField] private float _forwardSpeed = 0f;
+        private CharacterController _character;
+        private Vector3 _moveDirection = Vector3.zero;
+        
+        
+        
+        
         private Weapon.Weapon _weapon;
         private Health _health;
         
 
         private void Awake()
         {
+            _camera = Camera.main;
+            
+            _character = GetComponent<CharacterController>();
             _weapon = GetComponentInChildren<Weapon.Weapon>();
             _health = FindObjectOfType<Health>();
         }
@@ -33,41 +54,49 @@ namespace Player
 
         private void Update()
         {
-            float moveHorizontal = Input.GetAxis("Horizontal");
-            float moveVertical = Input.GetAxis("Vertical");
-            // float Rotation = Input.GetAxis("Rotation");
-
-            float mouseX = Input.GetAxis("Mouse X");
-            float mouseY = Input.GetAxis("Mouse Y");
             
-            transform.Rotate(0, mouseX * _rotationSpeed, 0);
-
-            float currentPotationX = camera.transform.rotation.eulerAngles.x;
-            float newRotationX = currentPotationX - mouseY * _rotationSpeed;
-            newRotationX = Mathf.Clamp(newRotationX, -90, 90);
-            camera.transform.rotation = Quaternion.Euler(newRotationX, 0, 0);
+            Rotation();
+            Move();
             
-            Vector3 moveDirection = new Vector3(moveHorizontal, 0.0f, moveVertical);
-            Vector3 newPosition = transform.position + moveDirection * _forwardSpeed * Time.deltaTime;
-            // Quaternion newRotation = Quaternion.Euler(0, Rotation * _rotationSpeed * Time.deltaTime, 0); 
-            
-
-            //transform.rotation *= newRotation;
-            transform.position = newPosition;
-
-
             if (Input.GetMouseButtonDown(0))
             {
                 _weapon.Shoot();
             }
         }
-
+        
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.TryGetComponent(out Bullet bullet)) 
             {
                 TakeDamage(bullet.Damage);
             }
+        }
+        
+
+        private void Rotation()
+        {
+            _mouseX += Input.GetAxis("Mouse X") * _rotationSpeed;
+            _mouseY += Input.GetAxis("Mouse Y") * _rotationSpeed;
+
+            _mouseY = Mathf.Clamp(_mouseY, minRotateY,maxRotateY);
+
+            _currentRotationX = Mathf.SmoothDamp(_currentRotationX, _mouseX , ref _velocityX, _smoothTime);
+            _currentRotationY = Mathf.SmoothDamp(_currentRotationY, _mouseY , ref _velocityY, _smoothTime);
+           
+             
+            _camera.transform.rotation = Quaternion.Euler(-_currentRotationY, _currentRotationX, 0);
+            transform.rotation = Quaternion.Euler(0, _currentRotationX, 0);
+        }
+        
+        private void Move()
+        {
+            var moveHorizontalX = Input.GetAxis("Horizontal");
+            var moveVerticalZ = Input.GetAxis("Vertical");
+            
+            _moveDirection = new Vector3(moveHorizontalX, 0, moveVerticalZ);
+            _moveDirection = transform.TransformDirection(_moveDirection);
+            
+            _character.Move(_moveDirection * (_forwardSpeed * Time.deltaTime));
         }
 
         private void TakeDamage(float damage)
